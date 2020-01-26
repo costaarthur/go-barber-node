@@ -86,6 +86,18 @@ class AppointmentController {
         .json({ error: 'Appointment date is not available' });
     }
 
+    const user = await User.findByPk(req.userId);
+
+    // const checkUserIsProvider = await User.findByPk(req.userId);
+    // console.log(user.id);
+    // console.log(provider_id);
+    // console.log(req.user_id);
+
+    // TUZAO CHECK USER IS PROVIDER
+    if (user.id === provider_id) {
+      return res.status(400).json({ error: "You can't provide yourself" });
+    }
+
     const appointment = await Appointment.create({
       user_id: req.userId,
       provider_id,
@@ -96,12 +108,15 @@ class AppointmentController {
      ***** Notify appointment Provider
      */
 
-    const user = await User.findByPk(req.userId);
     const formattedDate = format(
       hourStart,
-      "'dia' dd 'de' MMMM', às' H:mm:h'",
+      "'dia' dd 'de' MMMM', às' H:mm'h'",
       { locale: pt }
     );
+
+    /* checkUserIsProvider
+      const checkUserIsProvider = await User.findByPk(req.userId)
+      if (checkUserIsProvider) = */
 
     await Notification.create({
       content: `Novo agendamento de ${user.name} para ${formattedDate}`,
