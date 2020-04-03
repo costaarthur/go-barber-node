@@ -53,7 +53,8 @@ class UserController {
     }
     const { email, oldPassword } = req.body;
 
-    const user = await User.findByPk(req.userId);
+    const user = await User.findByPk(req.userId); // findbypk procura pela primary
+    // key definida na migration
 
     if (email !== user.email) {
       const userExists = await User.findOne({
